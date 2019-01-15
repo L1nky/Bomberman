@@ -295,7 +295,14 @@ void update_bombs()
 	for(i = 0; i < GAME_TILE_SIZE; i++)
 		if(crates_destroyed[i])
 		{
-			world[i] = GROUND;
+			int random = rand();
+			printf("%d    %d", random, RAND_MAX*STORAGE_UPGRADE_APPARITION_PROB);
+			if(random < RAND_MAX*STORAGE_UPGRADE_APPARITION_PROB)
+				world[i] = STORAGE_UPGRADE;
+			else if(random - RAND_MAX*STORAGE_UPGRADE_APPARITION_PROB < RAND_MAX* RANGE_UPGRADE_APPARITION_PROB)
+				world[i] = RANGE_UPGRADE;
+			else
+				world[i] = GROUND;
 			crates_destroyed[i] = 0;
 		}
 
@@ -455,34 +462,6 @@ void handle_upgrade()
 			player2.bomb_range_upgrade = BOMB_MAX_RANGE - BOMB_BASE_RANGE;
 		else mmEffect(SFX_MARIO_TOUCH_ENNEMY);
 		world[player2_idx] = GROUND;
-	}
-
-	if((float)rand()*AVERAGE_STORAGE_UPGRADE_APPARITION_TIME/RAND_MAX < 1)
-	{
-		u8 idx = (float)rand()*GAME_TILE_SIZE/RAND_MAX;
-		u8 i;
-		for(i = 0; i < GAME_TILE_SIZE; i++)
-		{
-			if(world[(idx + i) % (GAME_TILE_SIZE)] == GROUND)
-			{
-				world[(idx + i) % (GAME_TILE_SIZE)] = STORAGE_UPGRADE;
-				break;
-			}
-		}
-	}
-
-	if((float)rand()*AVERAGE_RANGE_UPGRADE_APPARITION_TIME/RAND_MAX < 1)
-	{
-		u8 idx = (float)rand()*GAME_TILE_SIZE/RAND_MAX;
-		u8 i;
-		for(i = 0; i < GAME_TILE_SIZE; i++)
-		{
-			if(world[(idx + i) % (GAME_TILE_SIZE)] == GROUND)
-			{
-				world[(idx + i) % (GAME_TILE_SIZE)] = RANGE_UPGRADE;
-				break;
-			}
-		}
 	}
 }
 
