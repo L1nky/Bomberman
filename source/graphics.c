@@ -12,9 +12,9 @@ void configureGraphics()
 	configureGraphics_sub();
 }
 
-void updateGraphics(u8* world, player player1, player player2, u8* board)
+void updateGraphics(u8* world, player player1, player player2, u8* board, u8 isPaused, u8 inMainMenu)
 {
 	updateGraphics_main(world);
-	updateSprites(player1, player2);
+	updateSprites(player1, player2, isPaused, inMainMenu);
 	updateGraphics_sub(board);
 }

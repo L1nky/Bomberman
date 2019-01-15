@@ -8,4 +8,8 @@ void configureGraphics_main();
 
 void updateGraphics_main(u8* world);
 
+void loadMainMenu();
+
+void loadGameBoard();
+
 #endif /* GRAPHICS_MAIN_H_ */

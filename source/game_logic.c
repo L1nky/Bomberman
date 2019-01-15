@@ -37,9 +37,7 @@ player player1, player2;
 
 void init_game(int initial_lives)
 {
-	//stop displaying lives selection background
-	REG_DISPCNT = REG_DISPCNT & ~DISPLAY_BG0_ACTIVE;
-
+	isPaused = 0;
 	u8 i;
 	for(i = 0; i < GAME_TILE_SIZE; i++)
 		world[i] = (i % GAME_TILE_SIZE_X) % 2 && (i/GAME_TILE_SIZE_X) % 2 ? WALL : CRATE;
@@ -102,7 +100,7 @@ void update_game()
 		{
 			touchPosition touch;
 			touchRead(&touch);
-			if(touch.py>128)
+			if(touch.py > 128)
 			{
 				if(touch.px < 64)
 					init_game(1);
@@ -113,8 +111,8 @@ void update_game()
 				else if(touch.px < 256)
 					init_game(4);
 
-				inMainMenu = 0;
 				loadGameBoard();
+				inMainMenu = 0;
 			}
 		}
 		return;
@@ -130,13 +128,26 @@ void update_game()
 		return;
 	}
 
-	if(!isPaused)
+	if(isPaused)
+	{
+		if(held & KEY_TOUCH)
+		{
+			touchPosition touch;
+			touchRead(&touch);
+			if(touch.px >= 96 && touch.px < 160 && touch.py >= 84 && touch.py < 116)
+			{
+				loadMainMenu();
+				inMainMenu = 1;
+			}
+		}
+	}
+	else
 	{
 		do_game_tick(down, held);
 	}
 
 	updateBoard();
-	updateGraphics(world, player1, player2, board);
+	updateGraphics(world, player1, player2, board, isPaused, inMainMenu);
 }
 
 void do_game_tick(unsigned down, unsigned held)

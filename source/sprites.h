@@ -6,6 +6,6 @@
 
 void configureSprites();
 
-void updateSprites(player player1, player player2);
+void updateSprites(player player1, player player2, u8 isPaused, u8 inMainMenu);
 
 #endif /* SPRITES_H_ */

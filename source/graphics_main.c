@@ -13,6 +13,8 @@
 #define BG3_MAIN_MAP_BASE 3
 #define BG3_MAIN_TILE_BASE 2
 
+#define MAIN_MENU_OFFSET 100
+
 void configBG0_main(int map_base, int tile_base);
 void configBG1_main(int map_base, int tile_base);
 void configBG2_main(int map_base, int tile_base);
@@ -26,6 +28,7 @@ void configureGraphics_main()
 	REG_DISPCNT = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE;
 	VRAM_A_CR = VRAM_ENABLE | VRAM_A_MAIN_BG;
 
+	configBG0_main(BG0_MAIN_MAP_BASE, BG0_MAIN_TILE_BASE);
 	configBG1_main(BG1_MAIN_MAP_BASE, BG1_MAIN_TILE_BASE);
 	configBG2_main(BG2_MAIN_MAP_BASE, BG2_MAIN_TILE_BASE);
 	configBG3_main(BG3_MAIN_MAP_BASE, BG3_MAIN_TILE_BASE);
@@ -36,7 +39,11 @@ void configBG0_main(int map_base, int tile_base)
 	BGCTRL[0] = BG_COLOR_256 | BG_MAP_BASE(map_base) | BG_TILE_BASE(tile_base) | BG_32x32;
 
 	dmaCopy(main_menuTiles, BG_TILE_RAM(tile_base), main_menuTilesLen);
-	dmaCopy(main_menuPal, BG_PALETTE, main_menuPalLen);
+	dmaCopy(empty_tile, &BG_TILE_RAM(tile_base)[main_menuTilesLen/2], 64);
+	dmaCopy(main_menuPal, &BG_PALETTE[MAIN_MENU_OFFSET], main_menuPalLen);
+	int i;
+	for(i = 0; i < main_menuTilesLen; i++)
+		((u8*)BG_TILE_RAM(tile_base))[i] += MAIN_MENU_OFFSET;
 }
 
 void configBG1_main(int map_base, int tile_base)
@@ -113,13 +120,13 @@ void configBG3_main(int map_base, int tile_base)
 	for(row = 0; row < 24; row++)
 		for(column = 0; column < 32; column++)
 		{
-			if(row > 20 || column > 26)
+			if(row < 1 || row > 21 || column < 2 || column > 28)
 				BG_MAP_RAM(map_base)[row*32 + column] = 5;
-			else if((row/3) % 2 == 0 || (column/3) % 2 == 0)
+			else if(((row - 1)/3) % 2 == 0 || ((column - 2)/3) % 2 == 0)
 				BG_MAP_RAM(map_base)[row*32 + column] = 0;
 			else
 			{
-				rel_id = 3*(row % 3) + column % 3;
+				rel_id = 3*((row - 1) % 3) + (column - 2) % 3;
 				switch(rel_id)
 				{
 					case 0: BG_MAP_RAM(map_base)[row*32 + column] = 1; break;
@@ -134,11 +141,6 @@ void configBG3_main(int map_base, int tile_base)
 				}
 			}
 		}
-}
-
-void configBG0(int map_base, int tile_base)
-{
-
 }
 
 void updateGraphics_main(u8* world)
@@ -159,33 +161,33 @@ void updateBG1_main(u8* world)
 				rel_id = 3*(row % 3) + column % 3;
 				switch(rel_id)
 				{
-					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 1; break;
-					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 2; break;
-					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + 1; break;
-					case 3: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 4; break;
-					case 4: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 5; break;
-					case 5: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + 4; break;
-					case 6: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 11) + 1; break;
-					case 7: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 3; break;
-					case 8: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + (1 << 11) + 1;
+					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 1; break;
+					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 2; break;
+					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + 1; break;
+					case 3: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 4; break;
+					case 4: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 5; break;
+					case 5: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + 4; break;
+					case 6: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 11) + 1; break;
+					case 7: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 3; break;
+					case 8: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + (1 << 11) + 1;
 				}
 			}
 			else if(type == STORAGE_UPGRADE)
 			{
-				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 6;
+				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 6;
 			}
 			else if(type == RANGE_UPGRADE)
 			{
-				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 7;
+				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 7;
 			}
 			else if(VERT_EXPLOSION_START <= type && type <= VERT_EXPLOSION_END)
 			{
 				rel_id = column % 3;
 				switch(rel_id)
 				{
-					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 8; break;
-					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 9; break;
-					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + 8;
+					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 8; break;
+					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 9; break;
+					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + 8;
 				}
 			}
 			else if(HOR_EXPLOSION_START <= type && type <= HOR_EXPLOSION_END)
@@ -193,27 +195,27 @@ void updateBG1_main(u8* world)
 				rel_id = row % 3;
 				switch(rel_id)
 				{
-					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 10; break;
-					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 11; break;
-					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 11) + 10;
+					case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 10; break;
+					case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 11; break;
+					case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 11) + 10;
 				}
 			}
 			else if(CEN_EXPLOSION_START <=type && type <= CEN_EXPLOSION_END){
 				rel_id = 3*(row % 3) + column % 3;
 				switch(rel_id){
-				case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 12; break;
-				case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 13; break;
-				case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + 12; break;
-				case 3: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 14; break;
-				case 4: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 15; break;
-				case 5: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + 14; break;
-				case 6: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 11) + 12; break;
-				case 7: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 11) + 13; break;
-				case 8: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = (1 << 10) + (1 << 11) + 12; break;
+				case 0: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 12; break;
+				case 1: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 13; break;
+				case 2: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + 12; break;
+				case 3: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 14; break;
+				case 4: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 15; break;
+				case 5: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + 14; break;
+				case 6: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 11) + 12; break;
+				case 7: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 11) + 13; break;
+				case 8: BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = (1 << 10) + (1 << 11) + 12; break;
 				}
 			}
 			else
-				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[row*32 + column] = 0;
+				BG_MAP_RAM(BG1_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = 0;
 		}
 }
 
@@ -222,7 +224,7 @@ void updateBG2_main(u8* world)
 	int row, column;
 	for(row = 0; row < 21; row++)
 		for(column = 0; column < 27; column++)
-			BG_MAP_RAM(BG2_MAIN_MAP_BASE)[row*32 + column] = world[(row/3)*9 + (column/3)] == CRATE;
+			BG_MAP_RAM(BG2_MAIN_MAP_BASE)[(row + 1)*32 + column + 2] = world[(row/3)*9 + (column/3)] == CRATE;
 }
 
 void loadMainMenu()
@@ -235,5 +237,5 @@ void loadGameBoard()
 	int row, column;
 	for(row = 0; row < 24; row++)
 		for(column = 0; column < 32; column++)
-			BG_MAP_RAM(BG0_MAIN_MAP_BASE)[row*32 + column] = 0;
+			BG_MAP_RAM(BG0_MAIN_MAP_BASE)[row*32 + column] = main_menuTilesLen/2;
 }
