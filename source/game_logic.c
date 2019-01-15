@@ -30,6 +30,7 @@ u8 world[GAME_TILE_SIZE];
 u8 crates_destroyed[GAME_TILE_SIZE] = {0};
 
 u8 isPaused = 0;
+u8 inMainMenu = 1;
 
 player player1, player2;
 
@@ -93,6 +94,26 @@ void update_game()
 	scanKeys();
 	unsigned down = keysDown();
 	unsigned held = keysHeld();
+
+	if(inMainMenu)
+	{
+		if(held & KEY_TOUCH)
+		{
+			touchPosition touch;
+			touchRead(&touch);
+			if(touch.py>128)
+			{
+				if(touch.px<64){
+					lives = 1; break;}
+						else if(touch.px<128){
+							lives = 2; break;}
+						else if(touch.px<192){
+							lives = 3; break;}
+						else if(touch.px<256){
+							lives = 4; break;}
+					}
+				}
+	}
 
 	if(down & KEY_START)
 	{

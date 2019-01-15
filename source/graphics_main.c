@@ -3,7 +3,8 @@
 #include "definitions.h"
 #include <nds.h>
 
-#define BG0_MAIN_MAP_BASE
+#define BG0_MAIN_MAP_BASE 4
+#define BG0_MAIN_TILE_BASE 3
 #define BG1_MAIN_MAP_BASE 1
 #define BG1_MAIN_TILE_BASE 0
 #define BG2_MAIN_MAP_BASE 2
@@ -27,6 +28,14 @@ void configureGraphics_main()
 	configBG1_main(BG1_MAIN_MAP_BASE, BG1_MAIN_TILE_BASE);
 	configBG2_main(BG2_MAIN_MAP_BASE, BG2_MAIN_TILE_BASE);
 	configBG3_main(BG3_MAIN_MAP_BASE, BG3_MAIN_TILE_BASE);
+}
+
+void configBG0_main(int map_base, int tile_base)
+{
+	BGCTRL[0] = BG_COLOR_256 | BG_MAP_BASE(map_base) | BG_TILE_BASE(tile_base) | BG_32x32;
+
+	dmaCopy(main_me, BG_TILE_RAM(tile_base), 64);
+	dmaCopy(bomb_tile_corner, &BG_TILE_RAM(tile_base)[32], 64);
 }
 
 void configBG1_main(int map_base, int tile_base)
@@ -213,4 +222,13 @@ void updateBG2_main(u8* world)
 	for(row = 0; row < 21; row++)
 		for(column = 0; column < 27; column++)
 			BG_MAP_RAM(BG2_MAIN_MAP_BASE)[row*32 + column] = world[(row/3)*9 + (column/3)] == CRATE;
+}
+
+void loadMainMenu()
+{
+
+}
+void loadGameBoard()
+{
+
 }
