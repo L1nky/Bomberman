@@ -3,6 +3,7 @@
 #include "definitions.h"
 #include "sounds.h"
 #include "graphics_sub.h"
+#include "graphics_main.h"
 
 #include <nds.h>
 #include <stdio.h>
@@ -103,16 +104,20 @@ void update_game()
 			touchRead(&touch);
 			if(touch.py>128)
 			{
-				if(touch.px<64){
-					lives = 1; break;}
-						else if(touch.px<128){
-							lives = 2; break;}
-						else if(touch.px<192){
-							lives = 3; break;}
-						else if(touch.px<256){
-							lives = 4; break;}
-					}
-				}
+				if(touch.px < 64)
+					init_game(1);
+				else if(touch.px < 128)
+					init_game(2);
+				else if(touch.px < 192)
+					init_game(3);
+				else if(touch.px < 256)
+					init_game(4);
+
+				inMainMenu = 0;
+				loadGameBoard();
+			}
+		}
+		return;
 	}
 
 	if(down & KEY_START)

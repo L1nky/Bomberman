@@ -29,10 +29,7 @@ int main(void) {
 
     configureGraphics();
 
-    u8 number_lives=0;
-   	number_lives = select_lives();
-
-    init_game(number_lives);
+    loadMainMenu();
 
     scanKeys();
 

@@ -2,6 +2,7 @@
 #include "tiles.h"
 #include "definitions.h"
 #include <nds.h>
+#include "main_menu.h"
 
 #define BG0_MAIN_MAP_BASE 4
 #define BG0_MAIN_TILE_BASE 3
@@ -22,7 +23,7 @@ void updateBG2_main(u8* world);
 
 void configureGraphics_main()
 {
-	REG_DISPCNT = MODE_0_2D | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE;
+	REG_DISPCNT = MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE;
 	VRAM_A_CR = VRAM_ENABLE | VRAM_A_MAIN_BG;
 
 	configBG1_main(BG1_MAIN_MAP_BASE, BG1_MAIN_TILE_BASE);
@@ -34,8 +35,8 @@ void configBG0_main(int map_base, int tile_base)
 {
 	BGCTRL[0] = BG_COLOR_256 | BG_MAP_BASE(map_base) | BG_TILE_BASE(tile_base) | BG_32x32;
 
-	dmaCopy(main_me, BG_TILE_RAM(tile_base), 64);
-	dmaCopy(bomb_tile_corner, &BG_TILE_RAM(tile_base)[32], 64);
+	dmaCopy(main_menuTiles, BG_TILE_RAM(tile_base), main_menuTilesLen);
+	dmaCopy(main_menuPal, BG_PALETTE, main_menuPalLen);
 }
 
 void configBG1_main(int map_base, int tile_base)
@@ -226,9 +227,13 @@ void updateBG2_main(u8* world)
 
 void loadMainMenu()
 {
-
+	dmaCopy(main_menuMap, BG_MAP_RAM(BG0_MAIN_MAP_BASE), main_menuMapLen);
 }
+
 void loadGameBoard()
 {
-
+	int row, column;
+	for(row = 0; row < 24; row++)
+		for(column = 0; column < 32; column++)
+			BG_MAP_RAM(BG0_MAIN_MAP_BASE)[row*32 + column] = 0;
 }
