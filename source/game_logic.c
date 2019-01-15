@@ -32,6 +32,7 @@ u8 crates_destroyed[GAME_TILE_SIZE] = {0};
 
 u8 isPaused = 0;
 u8 inMainMenu = 1;
+u8 chosen_lives = 0;
 
 player player1, player2;
 
@@ -82,6 +83,7 @@ void init_game(int initial_lives)
 	}
 
 	//MUSIC MODULE START
+	mmStop();
 	mmStart(MOD_CLONE_WARPING, MM_PLAY_LOOP);
 
 	updateBoard();
@@ -102,14 +104,14 @@ void update_game()
 			touchRead(&touch);
 			if(touch.py > 128)
 			{
-				if(touch.px < 64)
-					init_game(1);
-				else if(touch.px < 128)
-					init_game(2);
-				else if(touch.px < 192)
-					init_game(3);
-				else if(touch.px < 256)
-					init_game(4);
+				if(touch.px < 64){
+					init_game(1); chosen_lives =1;}
+				else if(touch.px < 128){
+					init_game(2);chosen_lives =2;}
+				else if(touch.px < 192){
+					init_game(3);chosen_lives =3;}
+				else if(touch.px < 256){
+					init_game(4);chosen_lives =4;}
 
 				loadGameBoard();
 				inMainMenu = 0;
@@ -154,7 +156,7 @@ void do_game_tick(unsigned down, unsigned held)
 {
 	if(player1.lives <= 0 || player2.lives <= 0)
 	{
-		init_game(PLAYER_INITIAL_LIVES);
+		init_game(chosen_lives);
 		return;
 	}
 	update_bombs();

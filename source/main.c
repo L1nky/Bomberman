@@ -7,6 +7,7 @@
 #include <maxmod9.h>
 #include "soundbank.h"
 #include "soundbank_bin.h"
+#include "graphics_main.h"
 
 int main(void) {
 	
@@ -28,7 +29,7 @@ int main(void) {
     mmLoadEffect(SFX_MARIO_TOUCH_ENNEMY);
 
     configureGraphics();
-
+    mmStart(MOD_DUKE_NUKEM, MM_PLAY_LOOP);
     loadMainMenu();
 
     scanKeys();
