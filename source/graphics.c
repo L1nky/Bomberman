@@ -6,7 +6,7 @@
 
 void configureGraphics()
 {
-	REG_POWERCNT ^= BIT(15);
+	REG_POWERCNT ^= BIT(15); //inverts main and sub displays
 	configureGraphics_main();
 	configureSprites();
 	configureGraphics_sub();
