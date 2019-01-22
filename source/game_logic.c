@@ -417,12 +417,12 @@ u8 explode_tile(u8 x, u8 y, u8 dir)
 	u8 i;
 	u8 tile_idx = y*GAME_TILE_SIZE_X + x;
 
-	if(((int)player1.x/24 == x || ((int)player1.x + PLAYER_SIZE_X)/24 == x) && ((int)player1.y/24 == y || ((int)player1.y + PLAYER_SIZE_Y)/24 == y))
+	if(((int)player1.x/24 == x || ((int)player1.x + PLAYER_SIZE_X-1)/24 == x) && ((int)player1.y/24 == y || ((int)player1.y + PLAYER_SIZE_Y-1)/24 == y))
 	{
 		player1.hurt = 1;
 	}
 
-	if(((int)player2.x/24 == x || ((int)player2.x + PLAYER_SIZE_X)/24 == x) && ((int)player2.y/24 == y || ((int)player2.y + PLAYER_SIZE_Y)/24 == y))
+	if(((int)player2.x/24 == x || ((int)player2.x + PLAYER_SIZE_X-1)/24 == x) && ((int)player2.y/24 == y || ((int)player2.y + PLAYER_SIZE_Y-1)/24 == y))
 	{
 		player2.hurt = 1;
 	}
