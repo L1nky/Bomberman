@@ -33,6 +33,7 @@ u8 crates_destroyed[GAME_TILE_SIZE] = {0};
 u8 isPaused = 0;
 u8 inMainMenu = 1;
 u8 chosen_lives = 0;
+u8 musicPlays = 0;
 
 player player1, player2;
 
@@ -98,7 +99,10 @@ void update_game()
 
 	if(inMainMenu)
 	{
-		mmStart(MOD_DUKE_NUKEM, MM_PLAY_LOOP);
+		if(!musicPlays){
+			mmStart(MOD_DUKE_NUKEM, MM_PLAY_LOOP);
+			musicPlays =1;
+		}
 		if(held & KEY_TOUCH)
 		{
 			touchPosition touch;
@@ -106,13 +110,13 @@ void update_game()
 			if(touch.py > 128)
 			{
 				if(touch.px < 64){
-					init_game(1); chosen_lives =1;}
+					init_game(1); chosen_lives =1; musicPlays =0;}
 				else if(touch.px < 128){
-					init_game(2);chosen_lives =2;}
+					init_game(2);chosen_lives =2; musicPlays =0;}
 				else if(touch.px < 192){
-					init_game(3);chosen_lives =3;}
+					init_game(3);chosen_lives =3; musicPlays =0;}
 				else if(touch.px < 256){
-					init_game(4);chosen_lives =4;}
+					init_game(4);chosen_lives =4; musicPlays =0;}
 
 				loadGameBoard();
 				inMainMenu = 0;

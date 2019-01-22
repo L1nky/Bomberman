@@ -29,7 +29,6 @@ int main(void) {
     mmLoadEffect(SFX_MARIO_TOUCH_ENNEMY);
 
     configureGraphics();
-    mmStart(MOD_DUKE_NUKEM, MM_PLAY_LOOP);
     loadMainMenu();
 
     scanKeys();
