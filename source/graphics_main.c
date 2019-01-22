@@ -43,7 +43,7 @@ void configBG0_main(int map_base, int tile_base)
 	dmaCopy(main_menuPal, &BG_PALETTE[MAIN_MENU_OFFSET], main_menuPalLen);
 	int i;
 	for(i = 0; i < main_menuTilesLen; i++)
-		((u8*)BG_TILE_RAM(tile_base))[i] += MAIN_MENU_OFFSET;
+		((u8*)BG_TILE_RAM(tile_base))[i] += MAIN_MENU_OFFSET;//adds offset to the pallette
 }
 
 void configBG1_main(int map_base, int tile_base)

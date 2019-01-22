@@ -98,6 +98,7 @@ void update_game()
 
 	if(inMainMenu)
 	{
+		mmStart(MOD_DUKE_NUKEM, MM_PLAY_LOOP);
 		if(held & KEY_TOUCH)
 		{
 			touchPosition touch;
